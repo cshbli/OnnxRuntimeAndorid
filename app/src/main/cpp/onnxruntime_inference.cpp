@@ -44,7 +44,7 @@ void Inference::createInputBuffer()
     
     Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
     input_tensor = Ort::Value::CreateTensor<float>(memory_info, input_data_chw.get(), input_tensor_size, input_node_dims.data(), input_node_dims.size());
-    assert(input_tensor.IsTensor());
+    // assert(input_tensor.IsTensor());
 
 
 }
@@ -116,7 +116,7 @@ void Inference::run(uint8_t* pixels){
     HWCtoCHW(normalized.get(), img_height_, img_width_, 3, input_data_chw.get());
     
     auto output_tensors = session_->Run(Ort::RunOptions{nullptr}, input_node_names.data(), &input_tensor, 1, output_node_names.data(), 1);
-    assert(output_tensors.size() == 1 && output_tensors.front().IsTensor());
+    // assert(output_tensors.size() == 1 && output_tensors.front().IsTensor());
 
     float* floatarr = output_tensors.front().GetTensorMutableData<float>();
     

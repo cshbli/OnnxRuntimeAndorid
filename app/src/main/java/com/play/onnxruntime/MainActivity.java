@@ -23,10 +23,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Size;
@@ -37,6 +33,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextureView mTextureView;
 
-    private  TextView mTextView;
+    private TextView mTextView;
 
     private Button mButton;
 
@@ -85,16 +86,15 @@ public class MainActivity extends AppCompatActivity {
 
     private int img_height = 224;
     private int img_width = 224;
-    private Inference inference=null;
+    private Inference inference = null;
 
     private Bitmap bitmap = null;
     private Bitmap resizedbitmap = null;
-    private boolean checkedPermissions =false;
+    private boolean checkedPermissions = false;
     private String output_text;
 
     String model_path = "/data/local/tmp/mobilenetv2-7.onnx";
     String label_file_path = "/data/local/tmp/labels.txt";
-
 
 
     private final TextureView.SurfaceTextureListener textureListener =
@@ -116,10 +116,9 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onSurfaceTextureUpdated(SurfaceTexture texture) {}
+                public void onSurfaceTextureUpdated(SurfaceTexture texture) {
+                }
             };
-
-
 
 
     private final CameraDevice.StateCallback mStateCallback =
@@ -129,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onOpened(@NonNull CameraDevice cameraDevice) {
                     // This method is called when the camera is opened.  We start camera preview here.
                     //cameraOpenCloseLock.release();
-                    Log.d(TAG,"Camera Opened");
+                    Log.d(TAG, "Camera Opened");
                     mCameraDevice = cameraDevice;
                     createPreviewSession();
 
@@ -138,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onDisconnected(@NonNull CameraDevice currentCameraDevice) {
                     //cameraOpenCloseLock.release();
-                    Log.d(TAG,"Camera Disconnected");
+                    Log.d(TAG, "Camera Disconnected");
                     mCameraDevice.close();
                     mCameraDevice = null;
                 }
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onError(@NonNull CameraDevice currentCameraDevice, int error) {
                     //cameraOpenCloseLock.release();
-                    Log.d(TAG,"Camera Error");
+                    Log.d(TAG, "Camera Error");
                     mCameraDevice.close();
                     mCameraDevice = null;
                 }
@@ -160,13 +159,15 @@ public class MainActivity extends AppCompatActivity {
                 public void onCaptureProgressed(
                         @NonNull CameraCaptureSession session,
                         @NonNull CaptureRequest request,
-                        @NonNull CaptureResult partialResult) {}
+                        @NonNull CaptureResult partialResult) {
+                }
 
                 @Override
                 public void onCaptureCompleted(
                         @NonNull CameraCaptureSession session,
                         @NonNull CaptureRequest request,
-                        @NonNull TotalCaptureResult result) {}
+                        @NonNull TotalCaptureResult result) {
+                }
             };
 
 
@@ -175,8 +176,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTextureView = (TextureView)findViewById(R.id.texture_view);
-        mTextView = (TextView)findViewById(R.id.text_view);
+        mTextureView = (TextureView) findViewById(R.id.texture_view);
+        mTextView = (TextView) findViewById(R.id.text_view);
         mTextView.setTextColor(Color.RED);
 
 
@@ -192,16 +193,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // hideSystemUI(); //hide UI
-        Log.d(TAG,"on Resume");
+        Log.d(TAG, "on Resume");
 
 
-
-
-        if(mTextureView.isAvailable()) {
+        if (mTextureView.isAvailable()) {
             Log.d(TAG, "mTexture ias available");
             openCamera(mTextureView.getWidth(), mTextureView.getHeight());
-        }
-        else
+        } else
             mTextureView.setSurfaceTextureListener(textureListener);
 
         openBackgroundThread();//start the backgroundthread
@@ -221,15 +219,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        Log.d(TAG,"on  Destory");
-        if(inference!=null)
+        Log.d(TAG, "on  Destory");
+        if (inference != null)
             inference.delete();
-        if(bitmap!=null)
+        if (bitmap != null)
             bitmap.recycle();
-        if(resizedbitmap!=null)
+        if (resizedbitmap != null)
             resizedbitmap.recycle();
     }
-
 
 
     private static Size chooseOptimalSize(Size[] choices, int textureViewWidth, int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
@@ -296,27 +293,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    void setupcamera(int width, int height)
-    {
+    void setupcamera(int width, int height) {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-            try
-            {
-                for(String cameraID: cameraManager.getCameraIdList())
-                {
-                    Log.d(TAG,"cameraID "+cameraID);
+            try {
+                for (String cameraID : cameraManager.getCameraIdList()) {
+                    Log.d(TAG, "cameraID " + cameraID);
                     CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraID);
                     Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
-                    if(facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT)
-                    {
+                    if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
                         continue;
                     }
 
                     int displayRotation = MainActivity.this.getWindowManager().getDefaultDisplay().getRotation();
                     int sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-                    Log.e(TAG,"sensorOrientation "+Integer.toString(sensorOrientation));
+                    Log.e(TAG, "sensorOrientation " + Integer.toString(sensorOrientation));
                     Log.e(TAG, "Display rotation " + displayRotation);
 
                     boolean swappedDimensions = false;
@@ -340,8 +332,8 @@ public class MainActivity extends AppCompatActivity {
 
                     StreamConfigurationMap map = characteristics.get(characteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
-                    Size largest = Collections.max(Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),new CompareSizesByArea());
-                    Log.d(TAG, "largest ImageFormat.JPEG Width, height "+largest.getWidth()+" x "+largest.getHeight());
+                    Size largest = Collections.max(Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)), new CompareSizesByArea());
+                    Log.d(TAG, "largest ImageFormat.JPEG Width, height " + largest.getWidth() + " x " + largest.getHeight());
 
                     Point displaysize = new Point();
                     MainActivity.this.getWindowManager().getDefaultDisplay().getSize(displaysize);
@@ -359,27 +351,23 @@ public class MainActivity extends AppCompatActivity {
                     }
 
 
-                    Log.d(TAG,"Display Width , Height "+maxPreviewWidth+" , "+maxPreviewHeight);
-                    Log.d(TAG,"Surface Width , Height "+rotatedPreviewWidth+" , "+rotatedPreviewHeight);
-                    Log.d(TAG, "Thresold  Display Width, Height " + MAX_PREVIEW_WIDTH+" , "+ MAX_PREVIEW_HEIGHT);
+                    Log.d(TAG, "Display Width , Height " + maxPreviewWidth + " , " + maxPreviewHeight);
+                    Log.d(TAG, "Surface Width , Height " + rotatedPreviewWidth + " , " + rotatedPreviewHeight);
+                    Log.d(TAG, "Thresold  Display Width, Height " + MAX_PREVIEW_WIDTH + " , " + MAX_PREVIEW_HEIGHT);
 
-                    if(maxPreviewWidth >  MAX_PREVIEW_WIDTH)
-                    {
+                    if (maxPreviewWidth > MAX_PREVIEW_WIDTH) {
                         maxPreviewWidth = MAX_PREVIEW_WIDTH;
                     }
-                    if(maxPreviewHeight > MAX_PREVIEW_HEIGHT)
-                    {
+                    if (maxPreviewHeight > MAX_PREVIEW_HEIGHT) {
                         maxPreviewHeight = MAX_PREVIEW_HEIGHT;
                     }
-                    Log.d(TAG,"Thresolded Display Width, Height "+ maxPreviewWidth+" , "+ maxPreviewHeight );
+                    Log.d(TAG, "Thresolded Display Width, Height " + maxPreviewWidth + " , " + maxPreviewHeight);
                     mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class), rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth, maxPreviewHeight, largest);
-                    Log.d(TAG, "Optimal preview Size Width, Height "+mPreviewSize.getWidth()+" , "+mPreviewSize.getHeight());
+                    Log.d(TAG, "Optimal preview Size Width, Height " + mPreviewSize.getWidth() + " , " + mPreviewSize.getHeight());
                     mCameraId = cameraID;
 
                 }
-            }
-            catch (CameraAccessException e)
-            {
+            } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -389,15 +377,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void openCamera(int width, int height) {
 
-        if(Build.VERSION.SDK_INT >= 23)
-            if(!askForPermission(Manifest.permission.CAMERA,CAMERA)) //ask for camera permission
-                return ;
+        if (Build.VERSION.SDK_INT >= 23)
+            if (!askForPermission(Manifest.permission.CAMERA, CAMERA)) //ask for camera permission
+                return;
 
         setupcamera(width, height);
         configureTransform(width, height);
         CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-            try {
-            cameraManager.openCamera(mCameraId,mStateCallback,mBackgroundHandler);
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            cameraManager.openCamera(mCameraId, mStateCallback, mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }

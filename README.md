@@ -1,3 +1,23 @@
+# Changes Log
+
+- Error: cvc-complex-type.2.4.a: Invalid content was found starting with element 'base-extension'. One of '{layoutlib}' is expected.
+
+  - From `Project Structure`, change `Gradle Version` to `7.5` and change `Android Gradle Plugin Version` to `7.4.2`.
+
+- OnnxRuntimeAndorid/app/src/main/cpp/onnxruntime_inference.cpp:47:5: error: use of undeclared identifier 'assert'
+
+  - comment out `assert` for now.
+
+- OnnxRuntimeAndorid/app/src/main/java/com/play/onnxruntime/MainActivity.java:26: error: package android.support.annotation does not exist
+  
+  - Right click on `App`, `Refactor\Migrate to AndroidX...`.
+  - Update those `import android.support.` to `import androidx.`
+
+- Error: ADB server version (36) doesn't match this client (39)
+
+  - For adb, make sure to use `Android\Sdk\platform-tools\adb`, 
+  - Run `adb shell` to verify
+
 # OnnxRuntimeAndorid
 
 This app uses ONNXRuntime (with NNAPI enabled) for Android C/C++ library to run MobileNet-v2 ONNX model. Android camera pixels are passed to ONNXRuntime using JNI
@@ -5,13 +25,13 @@ This app uses ONNXRuntime (with NNAPI enabled) for Android C/C++ library to run 
   <table>
     <tr>
       <td>
-        <img src="https://github.com/Rohithkvsp/OnnxRuntimeAndorid/blob/master/imgs/laptop.png" width="300" height="500">
+        <img src="./imgs/laptop.png" width="300" height="500">
       </td>
       <td>
-        <img src="https://github.com/Rohithkvsp/OnnxRuntimeAndorid/blob/master/imgs/lamp.png" width="300" height="500">
+        <img src="./imgs/lamp.png" width="300" height="500">
       </td>
       <td>
-        <img src="https://github.com/Rohithkvsp/OnnxRuntimeAndorid/blob/master/imgs/bottle.png" width="300" height="500">
+        <img src="./imgs/bottle.png" width="300" height="500">
       </td>
     </tr>
   </table>
