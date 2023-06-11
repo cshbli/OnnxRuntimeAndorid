@@ -18,6 +18,17 @@
   - For adb, make sure to use `Android\Sdk\platform-tools\adb`, 
   - Run `adb shell` to verify
 
+- Replace `libonnxruntime.so` from `onnxruntime-android-1.11.0.aar`
+
+  - To-Do: there are some issues with `onnxruntime-android-1.15.0.aar`.
+
+# C/C++ onnxruntime-android
+
+Download the [onnxruntime-android](https://mvnrepository.com/artifact/com.microsoft.onnxruntime/onnxruntime-android) (full package) or [onnxruntime-mobile](https://mvnrepository.com/artifact/com.microsoft.onnxruntime/onnxruntime-mobile) (mobile package) AAR hosted at MavenCentral, change the file extension from .aar to .zip, and unzip it. Include the header files from the headers folder, and the relevant libonnxruntime.so dynamic library from the jni folder in your NDK project.
+
+CUSTOM BUILD
+Refer to the instructions for creating a custom Android package.
+
 # OnnxRuntimeAndorid
 
 This app uses ONNXRuntime (with NNAPI enabled) for Android C/C++ library to run MobileNet-v2 ONNX model. Android camera pixels are passed to ONNXRuntime using JNI

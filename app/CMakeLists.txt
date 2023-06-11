@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 
-set(distribution_DIR ${CMAKE_SOURCE_DIR}/../distribution)
+#set(distribution_DIR ${CMAKE_SOURCE_DIR}/../distribution)
+set(distribution_DIR ${CMAKE_SOURCE_DIR}/../onnxruntime-android-1.11.0)
 
 add_library(libonnxruntime SHARED IMPORTED)
 
-set_target_properties(libonnxruntime PROPERTIES IMPORTED_LOCATION ${distribution_DIR}/lib/${ANDROID_ABI}/libonnxruntime.so)
+#set_target_properties(libonnxruntime PROPERTIES IMPORTED_LOCATION ${distribution_DIR}/lib/${ANDROID_ABI}/libonnxruntime.so)
+set_target_properties(libonnxruntime PROPERTIES IMPORTED_LOCATION ${distribution_DIR}/jni/${ANDROID_ABI}/libonnxruntime.so)
 
 
 
@@ -18,9 +20,9 @@ add_library( native-lib
              src/main/cpp/native-lib.cpp  src/main/cpp/onnxruntime_inference.cpp)
 
 
-include_directories(native-lib PRIVATE ${distribution_DIR}/include)
-include_directories(${distribution_DIR}/include/onnxruntime/core/session)
-
+#include_directories(native-lib PRIVATE ${distribution_DIR}/include)
+#include_directories(${distribution_DIR}/include/onnxruntime/core/session)
+include_directories(native-lib PRIVATE ${distribution_DIR}/headers)
 
 
 find_library( # Sets the name of the path variable.

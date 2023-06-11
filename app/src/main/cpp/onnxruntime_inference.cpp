@@ -22,7 +22,7 @@ Inference::Inference(std::unique_ptr<Ort::Env>& env, const char* modelpath, cons
 
     Ort::SessionOptions session_options;
     session_options.SetIntraOpNumThreads(1);
-    OrtSessionOptionsAppendExecutionProvider_Nnapi(session_options);
+//    OrtSessionOptionsAppendExecutionProvider_Nnapi(session_options);
     session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
     session_  = std::make_unique<Ort::Session>(*env_.get(), modelpath_, session_options);
     printNodes();
@@ -60,6 +60,8 @@ void Inference::printNodes() {
     
     for (int i = 0; i < num_input_nodes; i++){
         char* input_name = session_->GetInputName(i, allocator);
+        // Ort::AllocatedStringPtr input_name_ptr = session_->GetInputNameAllocated(i, allocator);
+        // char* input_name = input_name_ptr.get();
         LOGD("Input %d : name = %s", i, input_name);
         input_node_names[i] = input_name;
         
@@ -88,6 +90,8 @@ void Inference::printNodes() {
     
     for (int i = 0; i < num_output_nodes; i++){
         char* output_name = session_->GetOutputName(i, allocator);
+        // Ort::AllocatedStringPtr output_name_ptr = session_->GetOutputNameAllocated(i, allocator);
+        // char* output_name = output_name_ptr.get();
         LOGD("Output %d : name = %s", i, output_name);
         output_node_names[i] = output_name;
         
